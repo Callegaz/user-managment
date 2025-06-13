@@ -1,7 +1,6 @@
-// src/pages/styles.js (compartilhado entre Login e Home)
 import styled from 'styled-components'
 
-export const Container = styled.div`
+export const AuthContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,7 +12,11 @@ export const Container = styled.div`
   transition: all 0.3s ease;
 `
 
-export const Form = styled.form`
+export const HomeContainer = styled(AuthContainer)`
+  // Estilos específicos da home (se necessário)
+`
+
+export const AuthForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -51,4 +54,22 @@ export const Button = styled.button`
 export const Title = styled.h1`
   color: #646cff;
   margin-bottom: 1.5rem;
+`
+
+export const AuthLink = styled.span`
+  color: ${({ $isDarkMode }) => ($isDarkMode ? '#aaa' : '#666')};
+  text-align: center;
+  margin-top: 1rem;
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:hover {
+    color: #646cff;
+  }
+`
+
+export const ErrorText = styled.p`
+  color: #ff4d4f;
+  font-size: 0.875rem;
+  margin: -0.5rem 0 0.5rem;
 `

@@ -27,7 +27,7 @@ export default function ThemeToggle() {
 
   return (
     <ToggleContainer>
-      <ToggleButton $isDarkMode={isDarkMode} onClick={toggleTheme}>
+      <ToggleButton $isDarkMode={isDarkMode} onClick={toggleTheme} data-testid="theme-toggle">
         {isDarkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
       </ToggleButton>
     </ToggleContainer>

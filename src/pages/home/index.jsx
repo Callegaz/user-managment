@@ -1,16 +1,15 @@
-// src/pages/home.jsx
-import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../contexts/AuthContext'
 import { useTheme } from '../../contexts/ThemeContext'
-import { Container as HomeContainer, Title, Button } from './../styles'
+import { HomeContainer, Title, Button } from './../styles'
 
 export default function Home() {
-  const navigate = useNavigate()
+  const { user, signOut } = useAuth()
   const { isDarkMode } = useTheme()
 
   return (
-    <HomeContainer $isDarkMode={isDarkMode}>
-      <Title>Bem-vindo à Página Inicial</Title>
-      <Button onClick={() => navigate('/')}>Voltar para Login</Button>
+    <HomeContainer $isDarkMode={isDarkMode}  data-testid="home-page">
+      <Title  data-testid="welcome-message">Bem-vindo, {user?.email || 'Usuário'}!</Title>
+      <Button onClick={signOut} data-testid="logout-button">Sair</Button>
     </HomeContainer>
   )
 }
