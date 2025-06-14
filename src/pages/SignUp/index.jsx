@@ -14,6 +14,7 @@ import {
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -29,7 +30,7 @@ export default function SignUp() {
       return;
     }
 
-    const { error } = await signUp({ email, password });
+    const { error } = await signUp({ email, password, name });
     if (error) setError(error);
   };
 
@@ -41,6 +42,15 @@ export default function SignUp() {
         onSubmit={handleSubmit}
         data-testid="signup-form"
       >
+        <Input
+          data-testid="name-input"
+          $isDarkMode={isDarkMode}
+          type="text"
+          placeholder="Nome"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
         <Input
           data-testid="email-input"
           $isDarkMode={isDarkMode}

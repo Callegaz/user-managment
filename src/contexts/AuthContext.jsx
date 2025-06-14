@@ -1,6 +1,7 @@
-import { createContext, useState, useEffect, useContext } from 'react'
+// context/AuthContext.js
+import { createContext, useState, useEffect, useContext, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { loginUser, registerUser } from '../services/auth'
+import { authService } from '../services/auth'
 
 export const AuthContext = createContext()
 
@@ -9,61 +10,60 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+  const [auth, setAuth] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  const signIn = async (email, password) => {
-    try {
-      const { token, user } = await loginUser({ email, password })
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(user))
-      setUser(user)
-      navigate('/')
-      return { success: true }
-    } catch (error) {
-      console.error('Login failed:', error)
-      return { error: error.message }
-    }
-  }
-
-  const signUp = async ({ email, password }) => {
-    try {
-      const { token, user } = await registerUser({ email, password })
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(user))
-      setUser(user)
-      navigate('/')
-      return { success: true }
-    } catch (error) {
-      console.error('Registration failed:', error)
-      return { error: error.message }
-    }
-  }
-
-  const signOut = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    setUser(null)
-    navigate('/login')
-  }
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
+  const initializeAuth = useCallback(() => {
+    const savedAuth = authService.getCurrentAuth()
+    setAuth(savedAuth)
     setLoading(false)
   }, [])
 
+  const signIn = async (email, password) => {
+    try {
+      const authData = await authService.login({ email, password })
+      setAuth(authData)
+      navigate('/')
+      return { success: true }
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  const signUp = async (userData) => {
+    try {
+      const authData = await authService.register(userData)
+      setAuth(authData)
+      navigate('/')
+      return { success: true }
+    } catch (error) {
+      return { error: error.message }
+    }
+  }
+
+  const signOut = useCallback(() => {
+    authService.logout()
+    setAuth(null)
+    navigate('/login')
+  }, [navigate])
+
+  useEffect(() => {
+    initializeAuth()
+  }, [initializeAuth])
+
+  const value = {
+    user: auth?.user || null,
+    token: auth?.token || null,
+    loading,
+    isAuthenticated: !!auth?.token,
+    signIn,
+    signUp,
+    signOut
+  }
+
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      loading, 
-      signIn, 
-      signUp, 
-      signOut 
-    }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )

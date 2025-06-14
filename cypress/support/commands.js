@@ -25,8 +25,9 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 // cypress/support/commands.js
-Cypress.Commands.add('registerUser', (email, password) => {
+Cypress.Commands.add('registerUser', (email, password, testName) => {
   cy.visit('/signup')
+  cy.get('[data-testid="name-input"]').type(testName);
   cy.get('[data-testid="email-input"]').type(email)
   cy.get('[data-testid="password-input"]').type(password)
   cy.get('[data-testid="confirm-password-input"]').type(password)
